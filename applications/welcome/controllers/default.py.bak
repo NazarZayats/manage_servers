@@ -78,8 +78,8 @@ def data():
     return dict(form=crud())
 
 def create():
-    form = SQLFORM(db.servers)
-    return dict(form=form)
+    redirect(URL('index'))
 
 def get_server_info():
-     print 'inside record_config'
+    print "ARGS-->", dir(db.servers.insert)
+    redirect(URL('index'))

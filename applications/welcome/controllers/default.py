@@ -82,5 +82,5 @@ def create():
     return dict(form=form)
 
 def get_server_info():
-     print 'inside record_config'
-     return {}
+    print "ARGS-->", dir(db.servers.insert)
+    redirect(URL('index'))

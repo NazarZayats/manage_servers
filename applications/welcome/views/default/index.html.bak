@@ -1,16 +1,13 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 
-<a href= "{{=URL(r=request, f='create')}}">Add Server</a>
+<a href= "{{=URL(r=request, f='create')}}">Add Server</a><br>
 {{pass}}
-{{if 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{=A(T("Get info"), _href=URL('admin','default','index'), _class='btn',
-     _style='margin-top: 1em;')}}
+{{for server in servers:}}
+{{=server.address}}
+{{=server.username}}
+<input value="Get info" type="button" name="get_server_info" onclick='window.location="{{=URL('default', 'get_server_info')}}";'/><br>
 {{pass}}
-<input value="Get info" type="button" name="get_server_info"  onClick='window.location="{{=URL('default', 'get_server_info') + '/'}}";'/>
 {{block right_sidebar}}
 {{=A(T("Administrative Interface"), _href=URL('admin','default','index'), _class='btn',
      _style='margin-top: 1em;')}}
