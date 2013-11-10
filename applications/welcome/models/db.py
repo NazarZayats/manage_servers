@@ -65,10 +65,31 @@ use_janrain(auth, filename='private/janrain.key')
 #########################################################################
 ## Define your tables below (or better in another model file) for example
 ##
-db.define_table('servers',Field('active_server','boolean'),
-                            Field('address', 'string'),
-                            Field('username', 'string'),
-                            Field('passwd', 'password'))
+db.define_table('servers',
+                            Field('active_server',
+                                'boolean'),
+                            Field('address',
+                                'string',
+                                requires=[IS_NOT_EMPTY()],
+                                default="example.enapps.co.uk"),
+                            Field('username',
+                                'string',
+                                requires=[IS_NOT_EMPTY()],
+                                default='openerp'),
+                            Field('passwd',
+                                'password',
+                                requires=[IS_NOT_EMPTY()]),
+                            Field('running_time',
+                                'string'),
+                            Field('service_name',
+                                'string',
+                                default='openerp-server',
+                                requires=[IS_NOT_EMPTY()]),
+                            Field('port',
+                                'integer',
+                                default='22',
+                                requires=[IS_NOT_EMPTY()]),
+                            )
 ##
 ## Fields can be 'string','text','password','integer','double','boolean'
 ##       'date','time','datetime','blob','upload', 'reference TABLENAME'

@@ -1,14 +1,27 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 
-<a href= "{{=URL(r=request, f='create')}}">Add Server</a><br>
+<a href= "{{=URL(r=request, f='create')}}">Add Server</a>
 {{pass}}
-{{for server in servers:}}
-{{=server.address}}
-{{=server.username}}
-<input value="Get info" type="button" name="get_server_info" onclick='window.location="{{=URL('default', 'get_server_info')}}";'/><br>
+<table border="1">
+    <tr>
+        <th>Service name</th>
+        <th>Active</th>
+        <th>Address</th>
+        <th>Port</th>
+        <th>Username</th>
+        <th>Total running time</th>
+        <th/>
+    </tr>
+    <tr>
+        {{for server in servers:}}
+        <td>{{=server.service_name}}</td>
+        <td>{{=server.active_server}}</td>
+        <td>{{=server.address}}</td>
+        <td>{{=server.port}}</td>
+        <td>{{=server.username}}</td>
+        <td>{{=server.running_time}}</td>
+        <td><input value="Get info" type="button" name="get_server_info" onclick='window.location="{{=URL('default', 'get_server_info', args=[server.id])}}";'/></td>
+    </tr>
 {{pass}}
-{{block right_sidebar}}
-{{=A(T("Administrative Interface"), _href=URL('admin','default','index'), _class='btn',
-     _style='margin-top: 1em;')}}
-{{end}}
+</table>

@@ -78,8 +78,27 @@ def data():
     return dict(form=crud())
 
 def create():
-    redirect(URL('index'))
+    #form = SQLFORM(db.servers)
+    #return dict(form=form)
+    crud.messages.submit_button = "Create"
+    form = crud.create(db.servers, next="index")
+
+    return dict(form=form)
 
 def get_server_info():
-    print "ARGS-->", dir(db.servers.insert)
-    redirect(URL('index'))
+    import paramiko
+    server_id = request.args[0]
+    server_obj = db(db.servers.id == server_id).select()[0]
+    address = server_obj.address
+    passwd = server_obj.passwd
+    service_name = server_obj.service_name
+    username = server_obj.username
+    port = int(server_obj.port)
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    print type(port)
+    ssh.connect(address, username=username, password=passwd, port=port)
+    stdin, stdout, stderr = ssh.exec_command("ps -eo cmd,etime | grep %s" % service_name)
+    print stdout.readlines(), stderr.readlines()
+    return redirect(URL('index'))
