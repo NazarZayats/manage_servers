@@ -9,7 +9,6 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
-
 def index():
     """
     example action using the internationalization operator T and flash
@@ -77,6 +76,7 @@ def data():
     """
     return dict(form=crud())
 
+@auth.requires_login()
 def create():
     #form = SQLFORM(db.servers)
     #return dict(form=form)
@@ -85,6 +85,7 @@ def create():
 
     return dict(form=form)
 
+@auth.requires_login()
 def get_server_info():
     import paramiko
     server_id = request.args[0]
@@ -97,8 +98,14 @@ def get_server_info():
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    print type(port)
     ssh.connect(address, username=username, password=passwd, port=port)
-    stdin, stdout, stderr = ssh.exec_command("ps -eo cmd,etime | grep %s" % service_name)
-    print stdout.readlines(), stderr.readlines()
+    stdin, stdout, stderr = ssh.exec_command("ps -eo etime,cmd | grep %s" % service_name)
+    res = stdout.readlines()
+    if res:
+        res = [line for line in res if 'python' in line]
+        print res
+        running_time = res[0][1:11]
+        print running_time
+        server_obj.update(running_time=running_time)
+        db(db.servers.id==server_id).update(running_time = running_time)
     return redirect(URL('index'))
