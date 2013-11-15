@@ -19,7 +19,7 @@ def index():
     """
     response.flash = T("Welcome to Server's Manager")
     #return auth.wiki()
-    servers = db(db.servers).select()
+    servers = db(db.servers).select(orderby="id")
     return dict(servers=servers)
 
 
@@ -104,7 +104,7 @@ def get_server_info():
     if res:
         res = [line for line in res if 'python' in line]
         print res
-        running_time = res[0][1:11]
+        running_time = res[0][:11]
         print running_time
         server_obj.update(running_time=running_time)
         db(db.servers.id==server_id).update(running_time = running_time)
