@@ -4,24 +4,24 @@
 <a href= "{{=URL(r=request, f='create')}}">Add Server</a>
 {{pass}}
 <table border="1">
+    <thread>
     <tr>
         <th>Service name</th>
         <th>Active</th>
         <th>Address</th>
-        <th>Port</th>
-        <th>Username</th>
         <th>Total running time(dd-hh:mm:ss)</th>
         <th/>
     </tr>
-    <tr>
+    </thread>
+    <tbody>
         {{for server in servers:}}
+        <tr>
         <td>{{=server.service_name}}</td>
         <td>{{=server.active_server}}</td>
         <td>{{=server.address}}</td>
-        <td>{{=server.port}}</td>
-        <td>{{=server.username}}</td>
         <td>{{=server.running_time}}</td>
         <td><input value="Get info" type="button" name="get_server_info" onclick='window.location="{{=URL('default', 'get_server_info', args=[server.id])}}";'/></td>
-    </tr>
+        </tr>
+    </tbody>
 {{pass}}
 </table>
