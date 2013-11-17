@@ -17,10 +17,16 @@ def index():
     if you need a simple wiki simply replace the two lines below with:
     return auth.wiki()
     """
-    response.flash = T("Welcome to Server's Manager")
-    #return auth.wiki()
-    servers = db(db.servers).select(orderby="id")
-    return dict(servers=servers)
+    tbl = db.servers
+    tbl.port.readable = False
+    tbl.username.readable = False
+    tbl.id.readable = False
+    tbl.passwd.readable = False
+    query = db.servers.id >0
+    onclick="window.location = '" + URL('get_server_info')
+    links = [lambda row: A('Get running time',_href=URL("default","get_server_info",args=[row.id]))]
+    grid = SQLFORM.grid(query,paginate=10, links=links, orderby='address', details=False)
+    return dict(grid=grid)
 
 
 def user():
@@ -75,15 +81,6 @@ def data():
       LOAD('default','data.load',args='tables',ajax=True,user_signature=True)
     """
     return dict(form=crud())
-
-@auth.requires_login()
-def create():
-    #form = SQLFORM(db.servers)
-    #return dict(form=form)
-    crud.messages.submit_button = "Create"
-    form = crud.create(db.servers, next="index")
-
-    return dict(form=form)
 
 @auth.requires_login()
 def get_server_info():

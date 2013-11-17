@@ -1,27 +1,32 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 
-<a href= "{{=URL(r=request, f='create')}}">Add Server</a>
-{{pass}}
-<table border="1">
-    <thread>
-    <tr>
-        <th>Service name</th>
-        <th>Active</th>
-        <th>Address</th>
-        <th>Total running time(dd-hh:mm:ss)</th>
-        <th/>
-    </tr>
-    </thread>
-    <tbody>
-        {{for server in servers:}}
-        <tr>
-        <td>{{=server.service_name}}</td>
-        <td>{{=server.active_server}}</td>
-        <td>{{=server.address}}</td>
-        <td>{{=server.running_time}}</td>
-        <td><input value="Get info" type="button" name="get_server_info" onclick='window.location="{{=URL('default', 'get_server_info', args=[server.id])}}";'/></td>
-        </tr>
-    </tbody>
-{{pass}}
-</table>
+{{
+if not request.args:
+
+ w2p_grid_tbl = grid.element('table')
+ if w2p_grid_tbl:
+ original_export_menu = grid.element('div.w2p_export_menu')
+ export_menu_links = original_export_menu.elements('a')
+ export_menu_items = []
+ for link in export_menu_links:
+ item = LI(link)
+ export_menu_items.append(item)
+ pass
+ new_export_menu = DIV(
+                      A( T('Exports'),
+                         SPAN(_class='caret'),
+                         _href='#',
+                         _class='btn dropdown-toggle',
+                         **{'_data-toggle':"dropdown"}
+                        ),
+                      UL(*export_menu_items,
+                         _class='dropdown-menu'
+                        ),
+                    _class='w2p_export_menu btn-group'
+                    )
+ export_menu = grid.element('div.w2p_export_menu',replace=new_export_menu)
+ pass
+pass
+}}
+{{=grid}}
