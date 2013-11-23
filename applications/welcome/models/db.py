@@ -49,12 +49,12 @@ auth.define_tables(username=False, signature=False)
 ## configure email
 mail = auth.settings.mailer
 mail.settings.server = 'logging' or 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
+mail.settings.sender = 'counter.sparta@gmail.com'
 mail.settings.login = 'username:password'
 
 ## configure auth policy
-auth.settings.registration_requires_verification = False
-auth.settings.registration_requires_approval = False
+auth.settings.registration_requires_verification = True
+auth.settings.registration_requires_approval = True
 auth.settings.reset_password_requires_verification = True
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
@@ -69,7 +69,6 @@ db.define_table('servers',
                             Field('active_server',
                                 'boolean',
                                 default=True,
-                                
                                 ),
                             Field('address',
                                 'string',

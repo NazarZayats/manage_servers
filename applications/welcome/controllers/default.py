@@ -17,12 +17,18 @@ def index():
     if you need a simple wiki simply replace the two lines below with:
     return auth.wiki()
     """
+    if auth.user is None:
+        redirect(URL('default','user', args='login'))
+    if session.error:
+        response.flash = "Oh Crap! Something went wrong! Check with Nazarii!"
     tbl = db.servers
     tbl.port.readable = False
     tbl.username.readable = False
     tbl.id.readable = False
     tbl.passwd.readable = False
     query = db.servers.id >0
+    used_server = session.used_server or 0
+    db(db.servers.id !=used_server).update(running_time = '')
     onclick="window.location = '" + URL('get_server_info')
     links = [lambda row: A('Get running time',_href=URL("default","get_server_info",args=[row.id]))]
     grid = SQLFORM.grid(query,paginate=10, links=links, orderby='address', details=False)
@@ -95,14 +101,18 @@ def get_server_info():
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(address, username=username, password=passwd, port=port)
-    stdin, stdout, stderr = ssh.exec_command("ps -eo etime,cmd | grep %s" % service_name)
-    res = stdout.readlines()
-    if res:
-        res = [line for line in res if 'python' in line]
-        print res
-        running_time = res[0][:11]
-        print running_time
-        server_obj.update(running_time=running_time)
-        db(db.servers.id==server_id).update(running_time = running_time)
+    try:
+        ssh.connect(address, username=username, password=passwd, port=port)
+        stdin, stdout, stderr = ssh.exec_command("ps -eo etime,cmd | grep %s" % service_name)
+        res = stdout.readlines()
+        if res:
+            res = [line for line in res if 'python' in line]
+            running_time = res[0][:11]
+            server_obj.update(running_time=running_time)
+            db(db.servers.id==server_id).update(running_time = running_time)
+            RUNNING_TIME = {server_id: running_time}
+            session.error = False
+            session.used_server = server_id
+    except:
+        session.error = True
     return redirect(URL('index'))

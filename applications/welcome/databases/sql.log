@@ -401,3 +401,6 @@ CREATE TABLE servers(
     port INTEGER
 );
 success!
+timestamp: 2013-11-23T22:07:41.876775
+ALTER TABLE servers ADD running_time VARCHAR(512);
+success!

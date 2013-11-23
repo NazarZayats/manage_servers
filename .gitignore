@@ -6,7 +6,7 @@ sessions
 # inherit https://github.com/github/gitignore/blob/master/Python.gitignore
  
 *.py[co]
- 
+*.pyc
 # Packages
 *.egg
 *.egg-info
