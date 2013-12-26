@@ -11,7 +11,7 @@
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL('postgres://openerp:openerp!@10.0.3.177/test2',pool_size=1,check_reserved=['all'])
+    db = DAL('postgres://openerp:openerp!@10.0.3.177/test5',pool_size=1,check_reserved=['all'])
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     db = DAL('google:datastore')
@@ -66,9 +66,8 @@ use_janrain(auth, filename='private/janrain.key')
 ## Define your tables below (or better in another model file) for example
 ##
 db.define_table('servers',
-                            Field('active_server',
+                            Field('allow_managing',
                                 'boolean',
-                                default=True,
                                 ),
                             Field('address',
                                 'string',
@@ -85,14 +84,13 @@ db.define_table('servers',
                                 'string',
                                 writable=False,
                                 default=''),
-                            Field('service_name',
-                                'string',
-                                default='openerp-server',
-                                requires=[IS_NOT_EMPTY()]),
                             Field('port',
                                 'integer',
                                 default='1422',
                                 requires=[IS_NOT_EMPTY()]),
+                            Field('config',
+                                  'list:string',
+                                  requires=IS_IN_SET(('Wealden', 'Pinnacle', 'Kartell', 'Interfix'))),
                             )
 ##
 ## Fields can be 'string','text','password','integer','double','boolean'

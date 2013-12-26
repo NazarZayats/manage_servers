@@ -8,6 +8,8 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 ## - call exposes all registered services (none by default)
 #########################################################################
+import paramiko
+
 
 def index():
     """
@@ -26,11 +28,14 @@ def index():
     tbl.username.readable = False
     tbl.id.readable = False
     tbl.passwd.readable = False
+    tbl.allow_managing.readable = False
     query = db.servers.id >0
     used_server = session.used_server or 0
     db(db.servers.id !=used_server).update(running_time = '')
-    onclick="window.location = '" + URL('get_server_info')
-    links = [lambda row: A('Get running time',_href=URL("default","get_server_info",args=[row.id]))]
+    links = [lambda row: A(TAG.BUTTON('Get running time'), _href=URL("default","get_server_info",args=[row.id])),
+             lambda row: A(TAG.BUTTON('Restart'), _href=URL("default","restart",args=[row.id])) if row.allow_managing else False,
+             lambda row: A(TAG.BUTTON('Update addons'), _href=URL("default","update_addons",args=[row.id])) ,
+    ]
     grid = SQLFORM.grid(query,paginate=10, links=links, orderby='address', details=False)
     return dict(grid=grid)
 
@@ -88,31 +93,67 @@ def data():
     """
     return dict(form=crud())
 
-@auth.requires_login()
-def get_server_info():
-    import paramiko
-    server_id = request.args[0]
-    server_obj = db(db.servers.id == server_id).select()[0]
+def connect(server_obj):
     address = server_obj.address
     passwd = server_obj.passwd
-    service_name = server_obj.service_name
     username = server_obj.username
     port = int(server_obj.port)
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(address, username=username, password=passwd, port=port)
+    return ssh
+
+@auth.requires_login()
+def get_server_info():
+    server_id = request.args[0]
+    server_obj = db(db.servers.id == server_id).select()[0]
+    ssh = connect(server_obj)
     try:
-        ssh.connect(address, username=username, password=passwd, port=port)
-        stdin, stdout, stderr = ssh.exec_command("ps -eo etime,cmd | grep %s" % service_name)
+        stdin, stdout, stderr = ssh.exec_command("ps -eo etime,cmd | grep openerp-server")
         res = stdout.readlines()
         if res:
             res = [line for line in res if 'python' in line]
-            running_time = res[0][:11]
+            for arg in res[0].split(' '):
+                if arg:
+                    running_time = arg
+                    break
             server_obj.update(running_time=running_time)
             db(db.servers.id==server_id).update(running_time = running_time)
-            RUNNING_TIME = {server_id: running_time}
             session.error = False
             session.used_server = server_id
+    except Exception, e:
+        raise(e)
+        session.error = True
+    ssh.close()
+    return redirect(URL('index'))
+
+@auth.requires_login()
+def restart():
+    server_id = request.args[0]
+    server_obj = db(db.servers.id == server_id).select()[0]
+    ssh = connect(server_obj)
+    try:
+        stdin, stdout, stderr = ssh.exec_command("ps -eo pid,cmd | grep openerp-server")
+        res = stdout.readlines()
+        if res:
+            res = [line for line in res if 'python' in line]
+            for arg in res[0].split(' '):
+                if arg:
+                    pid = arg
+                    break
+            ssh.exec_command('kill -9 %s' % pid)
+        ssh.exec_command('nohup python /opt/openerp/enapps/ea_server/openerp-server -c /etc/openerp-server-%s.conf &' % server_obj.config[0].lower())
     except:
         session.error = True
+    ssh.close()
+    return redirect(URL('index'))
+
+@auth.requires_login()
+def update_addons():
+    server_id = request.args[0]
+    server_obj = db(db.servers.id == server_id).select()[0]
+    ssh = connect(server_obj)
+    ssh.exec_command('nohup python /opt/openerp/Dropbox/Enapps_addons/%s/update_modules.py &' % server_obj.config[0].lower())
+    ssh.close()
     return redirect(URL('index'))
