@@ -4,7 +4,7 @@ errors
 sessions
  
 # inherit https://github.com/github/gitignore/blob/master/Python.gitignore
- 
+*.log 
 *.py[co]
 *.pyc
 # Packages
