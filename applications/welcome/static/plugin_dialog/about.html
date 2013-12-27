@@ -1,0 +1,21 @@
+This is a web2py plugin that allows you to open a web2py form in a dialog box by calling getdialog(url).
+Also includes functions to convert web2py grid buttons to call getdialog(url)
+
+To install the plugin upload using the web2py admin plugin interface.
+
+Demo usage:
+	The plugin includes a complete example with model, view, controller, static files
+	Enter <yourapp>/plugin_dialog/index in your browser
+	The model populates a database table called plugin_dialog.customers
+	You will see a grid of customers
+	Click on the add or edit button to see the customer edit form inside a dialog box.
+
+Application usage:
+	Disable the example model by including in your model plugins.dialog.MODEL=False.
+	Base your controllers on controller/plugin_dialog
+	Base your views on views/plugin_dialog
+        gridpage.html is a main page that can include multiple grids or other components
+		edit.html is the edit form
+		grid.load contains the grid
+		dialog.html [preferably do not change this]
+	Do not change the static files

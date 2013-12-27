@@ -32,6 +32,7 @@ def index():
     query = db.servers.id >0
     used_server = session.used_server or 0
     db(db.servers.id !=used_server).update(running_time = '')
+    db.servers.config.represent = lambda value, row: DIV(value if value else '-',_class='config', _id=str(row.id)+'.config')
     links = [lambda row: A(TAG.BUTTON('Get running time'), _href=URL("default","get_server_info",args=[row.id])),
              lambda row: A(TAG.BUTTON('Restart'), _href=URL("default","restart",args=[row.id])) if row.allow_managing else False,
              lambda row: A(TAG.BUTTON('Update addons'), _href=URL("default","update_addons",args=[row.id])) ,
@@ -157,3 +158,9 @@ def update_addons():
     ssh.exec_command('nohup python /opt/openerp/Dropbox/Enapps_addons/%s/update_modules.py &' % server_obj.config[0].lower())
     ssh.close()
     return redirect(URL('index'))
+
+def update_config():
+    id,column = request.post_vars.id.split('.')
+    value = request.post_vars.value
+    db(db.servers.id == id).update(**{'config':value})
+    return value

@@ -1,0 +1,15 @@
+{{extend 'layout.html'}}
+
+<h2>This is the main page which can load many components</h2><br<br>
+
+{{if plugins.dialog.DEBUG:}}
+  {{=response.toolbar()}}
+{{pass}}
+
+<h3>This is a grid component</h3><br<br>
+
+<!-- This is the dialog box -->
+{{include 'plugin_dialog/dialog.html'}}
+
+<!-- This is a grid component with a list of customers -->
+{{=LOAD(c='plugin_dialog', f='grid.load', ajax=True, target='customer')}}
