@@ -2,7 +2,7 @@ cache
 databases
 errors
 sessions
- 
+*.pid 
 # inherit https://github.com/github/gitignore/blob/master/Python.gitignore
 *.log 
 httpserver.log
