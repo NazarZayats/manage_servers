@@ -95,10 +95,11 @@
       {{if response.title:}}
         <div class="span12">
             <div class="page-header">
-                <h1>
-                    Server manager
+                <h2>
+                    <span>Server manager</span>
+                    <img src="{{=URL('static/images','buben.gif')}}" height="100" width="100"/>
                     <small>{{=response.subtitle or ''}}</small>
-                </h1>
+                </h2>
             </div>
         </div>
 	{{pass}}

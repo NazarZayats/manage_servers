@@ -5,6 +5,7 @@ sessions
  
 # inherit https://github.com/github/gitignore/blob/master/Python.gitignore
 *.log 
+httpserver.log
 *.py[co]
 *.pyc
 # Packages

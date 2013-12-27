@@ -11,7 +11,7 @@
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL('postgres://openerp:openerp!@10.0.3.177/test5',pool_size=1,check_reserved=['all'])
+    db = DAL('postgres://openerp:openerp!@10.0.3.177/test5',pool_size=1,check_reserved=['all'], migrate=False)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     db = DAL('google:datastore')
