@@ -1,7 +1,17 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
+<script>
+jQuery(document).ready(function(){
+    jQuery('.config').editable("{{=URL('default', 'update_config')}}",{
+        tooltip: "Click to edit, enter to save",
+ indicator : 'updating',
+ type: 'select',
+ data: {'Pinnacle': 'Pinnacle', 'Wealden':'Wealden', 'Kartell': 'Kartell', 'Interfix': 'Interfix'} //Hardcode:)
 
+ });})
+</script>
 {{
+print grid
 if not request.args:
 
  w2p_grid_tbl = grid.element('table')

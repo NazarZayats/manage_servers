@@ -37,7 +37,7 @@ def index():
              lambda row: A(TAG.BUTTON('Restart'), _href=URL("default","restart",args=[row.id])) if row.allow_managing else False,
              lambda row: A(TAG.BUTTON('Update addons'), _href=URL("default","update_addons",args=[row.id])) ,
     ]
-    grid = SQLFORM.grid(query,paginate=10, links=links, orderby='address', details=False)
+    grid = SQLFORM.grid(query,paginate=10, links=links, orderby='address', details=False, searchable=False)
     return dict(grid=grid)
 
 
