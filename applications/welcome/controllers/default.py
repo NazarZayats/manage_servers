@@ -35,7 +35,7 @@ def index():
     db.servers.config.represent = lambda value, row: DIV(value if value else '-',_class='config', _id=str(row.id)+'.config')
     links = [lambda row: A(TAG.BUTTON('Get running time'), _href=URL("default","get_server_info",args=[row.id])),
              lambda row: A(TAG.BUTTON('Restart'), _href=URL("default","restart",args=[row.id])) if row.allow_managing else False,
-             lambda row: A(TAG.BUTTON('Update addons'), _href=URL("default","update_addons",args=[row.id])) ,
+             lambda row: A(TAG.BUTTON('Update addons'), _href=URL("default","update_addons",args=[row.id])) if row.allow_managing else False,
     ]
     grid = SQLFORM.grid(query,paginate=10, links=links, orderby='address', details=False, searchable=False)
     return dict(grid=grid)
@@ -155,7 +155,7 @@ def update_addons():
     server_id = request.args[0]
     server_obj = db(db.servers.id == server_id).select()[0]
     ssh = connect(server_obj)
-    ssh.exec_command('nohup python /opt/openerp/Dropbox/Enapps_addons/%s/update_modules.py &' % server_obj.config[0].lower())
+    ssh.exec_command('nohup python /opt/openerp/enapps/addons//%s/update_modules.py &' % server_obj.config[0].lower())
     ssh.close()
     return redirect(URL('index'))
 
