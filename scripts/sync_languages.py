@@ -3,13 +3,13 @@
 
 # TODO: Comment this code
 
-import sys
-import shutil
-import os
+#import sys
+#import shutil
+#import os
 
-from gluon.languages import findT
+#from gluon.languages import findT
 
-sys.path.insert(0, '.')
+'''sys.path.insert(0, '.')
 
 def sync_language(d, data):
     ''' this function makes sure a translated string will be prefered over an untranslated
@@ -74,4 +74,4 @@ if __name__ == "__main__":
     file = sys.argv[1]
     apps = sys.argv[2:]
 
-    sync_main(file, apps)
+    sync_main(file, apps)'''
