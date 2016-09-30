@@ -139,10 +139,8 @@ def restart():
         res = stdout.readlines()
         if res:
             res = [line for line in res if 'python' in line]
-            for arg in res[0].split(' '):
-                if arg:
-                    pid = arg
-                    break
+            pids = [arg for arg in res[0].split(' ') if arg]
+            pid = pids and pids[0] or False
             ssh.exec_command('kill -9 %s' % pid)
         ssh.exec_command('nohup python /opt/openerp/enapps/ea_server/openerp-server -c /etc/openerp-server-%s.conf &' % server_obj.config[0].lower())
     except:
